@@ -1,4 +1,4 @@
-es6-import-validate
+es6-import-validate [![Build Status](https://travis-ci.org/sproutsocial/es6-import-validate.png?branch=master)](https://travis-ci.org/sproutsocial/es6-import-validate)
 ===================
 
 A simple ES6 Harmony Module import statement validator.
