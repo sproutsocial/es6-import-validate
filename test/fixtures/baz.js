@@ -10,4 +10,4 @@ export var baz = bim;
 
 export { bim };
 
-export default bim;
+export default { bim: bim, baz: baz };

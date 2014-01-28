@@ -1,6 +1,6 @@
 {
   "name": "es6-import-validate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple ES6 Harmony Module import statement validator",
   "main": "index.js",
   "scripts": {
@@ -30,6 +30,6 @@
   "dependencies": {
     "lodash-node": "~2.4.1",
     "bluebird": "~1.0.0",
-    "esprima": "git://github.com/ariya/esprima.git#harmony"
+    "esprima": "git://github.com/jgable/esprima.git#exportDefaultObject"
   }
 }
