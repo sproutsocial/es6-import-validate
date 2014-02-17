@@ -3,6 +3,7 @@
 var path = require('path');
 
 var ES6ModuleFile = require('../lib/ES6ModuleFile'),
+    _ = require('lodash-node'),
     should = require('should'),
     sinon = require('sinon');
 
@@ -120,6 +121,41 @@ describe('ES6ModuleFile', function () {
                 errors[0].message.should.equal('Cannot find "missing" export for "foo"');
 
                 done();
+            });
+    });
+
+    it('allows you to override module names', function (done) {
+        var cwd = path.join(__dirname, 'fixtures', 'renamed'),
+            files = [
+                path.join(cwd, 'foo.js'),
+                path.join(cwd, 'bar.js')
+            ],
+            RenamedES6ModuleFile = function () {
+                ES6ModuleFile.apply(this, _.toArray(arguments));
+            };
+
+        RenamedES6ModuleFile.prototype = Object.create(ES6ModuleFile.prototype);
+
+        RenamedES6ModuleFile.prototype.getModuleName = function (filePath) {
+            var origName = ES6ModuleFile.prototype.getModuleName.apply(this, _.toArray(arguments));
+
+            return 'appkit/' + origName;
+        };
+
+        ES6ModuleFile.validateImports(files, { 
+                cwd: cwd,
+                ES6ModuleFile: RenamedES6ModuleFile
+            })
+            .then(function (result) {
+                should.exist(result);
+                should.exist(result['appkit/foo']);
+                should.exist(result['appkit/bar']);
+
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                done(err);
             });
     });
 });
