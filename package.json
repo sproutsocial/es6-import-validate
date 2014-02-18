@@ -4,7 +4,8 @@
   "description": "A simple ES6 Harmony Module import statement validator",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/jshint/bin/jshint lib/*.js test/*.js test/fixtures/*.js && node_modules/mocha/bin/mocha -R spec"
+    "test": "node_modules/jshint/bin/jshint lib/*.js test/*.js test/fixtures/*.js && node_modules/mocha/bin/mocha -R spec",
+    "coverage": "node_modules/jshint/bin/jshint lib/*.js test/*.js test/fixtures/*.js && node_modules/mocha/bin/mocha -r blanket -R html-cov > coverage.html && open coverage.html"
   },
   "repository": {
     "type": "git",
@@ -25,11 +26,18 @@
     "should": "~3.1.0",
     "mocha": "~1.17.1",
     "jshint": "~2.4.2",
-    "sinon": "~1.7.3"
+    "sinon": "~1.7.3",
+    "blanket": "~1.1.6"
   },
   "dependencies": {
     "lodash-node": "~2.4.1",
     "bluebird": "~1.0.0",
     "esprima": "git://github.com/jgable/esprima.git#exportDefaultObject"
+  },
+  "config": {
+    "blanket": {
+      "pattern": "lib",
+      "data-cover-never": "node_modules"
+    }
   }
 }

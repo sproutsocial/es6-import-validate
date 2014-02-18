@@ -1,6 +1,7 @@
 
 import { missing } from 'foo';
 import { bar } from 'bar';
+import something from 'notfound';
 
 var bim = {
 	property: true
