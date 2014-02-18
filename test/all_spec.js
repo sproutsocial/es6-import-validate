@@ -48,6 +48,34 @@ describe('ES6ModuleFile', function () {
             });
     });
 
+    it('reads a file and returns imports/exports info with named function exports', function (done) {
+        var file = new ES6ModuleFile({
+            cwd: path.join(__dirname, 'fixtures')
+        });
+
+        file.analyzeFile(path.join(__dirname, 'fixtures', 'foo.js'))
+            .then(function (info) {
+                should.exist(info.name);
+                should.exist(info.imports);
+                should.exist(info.exports);
+
+                info.name.should.equal('foo');
+
+                info.filePath.should.equal(path.join(file.opts.cwd, 'foo.js'));
+
+                info.imports.length.should.equal(0);
+                
+                info.exports.length.should.equal(2);
+                info.exports[0].name.should.equal('namedFoo');
+                info.exports[1].name.should.equal('default');
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            });
+    });
+
     it('takes a list of files and analyzes them in bulk', function (done) {
         var cwd = path.join(__dirname, 'fixtures'),
             files = [
@@ -64,7 +92,7 @@ describe('ES6ModuleFile', function () {
                 should.exist(result.baz);
 
                 result.foo.imports.length.should.equal(0);
-                result.foo.exports.length.should.equal(1);
+                result.foo.exports.length.should.equal(2);
 
                 result.bar.imports.length.should.equal(1);
                 result.bar.exports.length.should.equal(2);
