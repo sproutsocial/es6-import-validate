@@ -29,12 +29,15 @@ describe('ES6ModuleFile', function () {
 
                 info.filePath.should.equal(path.join(file.opts.cwd, 'baz.js'));
 
-                info.imports.length.should.equal(2);
+                info.imports.length.should.equal(3);
                 info.imports[0].name.should.equal('missing');
                 info.imports[0].from.should.equal('foo');
 
                 info.imports[1].name.should.equal('bar');
                 info.imports[1].from.should.equal('bar');
+
+                info.imports[2].name.should.equal('default');
+                info.imports[2].from.should.equal('notfound');
 
                 info.exports.length.should.equal(3);
                 info.exports[0].name.should.equal('baz');
@@ -63,7 +66,36 @@ describe('ES6ModuleFile', function () {
 
                 info.filePath.should.equal(path.join(file.opts.cwd, 'foo.js'));
 
-                info.imports.length.should.equal(0);
+                info.imports.length.should.equal(1);
+                
+                info.exports.length.should.equal(2);
+                info.exports[0].name.should.equal('namedFoo');
+                info.exports[1].name.should.equal('default');
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            });
+    });
+
+    it('allows passing a white list for modules', function (done) {
+        var file = new ES6ModuleFile({
+            cwd: path.join(__dirname, 'fixtures')
+        });
+
+        file.analyzeFile(path.join(__dirname, 'fixtures', 'foo.js'))
+            .then(function (info) {
+                should.exist(info.name);
+                should.exist(info.imports);
+                should.exist(info.exports);
+
+                info.name.should.equal('foo');
+
+                info.filePath.should.equal(path.join(file.opts.cwd, 'foo.js'));
+
+                info.imports.length.should.equal(1);
+                info.imports[0].name.should.equal('default');
                 
                 info.exports.length.should.equal(2);
                 info.exports[0].name.should.equal('namedFoo');
@@ -91,13 +123,13 @@ describe('ES6ModuleFile', function () {
                 should.exist(result.bar);
                 should.exist(result.baz);
 
-                result.foo.imports.length.should.equal(0);
+                result.foo.imports.length.should.equal(1);
                 result.foo.exports.length.should.equal(2);
 
                 result.bar.imports.length.should.equal(1);
                 result.bar.exports.length.should.equal(2);
 
-                result.baz.imports.length.should.equal(2);
+                result.baz.imports.length.should.equal(3);
                 result.baz.exports.length.should.equal(3);
 
                 done();
@@ -114,7 +146,12 @@ describe('ES6ModuleFile', function () {
                 path.join(cwd, 'bar.js')
             ];
 
-        ES6ModuleFile.validateImports(files, { cwd: cwd })
+        ES6ModuleFile.validateImports(files, { 
+                cwd: cwd,
+                whitelist: {
+                    resolver: ['default']
+                }
+            })
             .then(function (result) {
                 should.exist(result);
                 should.exist(result.foo);
@@ -135,18 +172,25 @@ describe('ES6ModuleFile', function () {
                 path.join(cwd, 'baz.js')
             ];
 
-        ES6ModuleFile.validateImports(files, { cwd: cwd })
+        ES6ModuleFile.validateImports(files, { 
+                cwd: cwd,
+                whitelist: {
+                    resolver: ['default']
+                }
+            })
             .then(function (result) {
                 done(new Error('Should reject when errors are found'));
             })
             .catch(function (errors) {
                 should.exist(errors);
                 
-                errors.length.should.equal(1);
+                errors.length.should.equal(2);
 
                 errors[0].name.should.equal('baz');
                 errors[0].filePath.should.equal(files[2]);
                 errors[0].message.should.equal('Cannot find "missing" export for "foo"');
+
+                errors[1].message.should.equal('Cannot find module "notfound"');
 
                 done();
             });

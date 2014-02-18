@@ -1,4 +1,7 @@
 
+// For testing white list
+import Resolver from 'resolver';
+
 var foo = {
 	property: true
 };
