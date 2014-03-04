@@ -200,7 +200,8 @@ describe('ES6ModuleFile', function () {
         var cwd = path.join(__dirname, 'fixtures', 'renamed'),
             files = [
                 path.join(cwd, 'foo.js'),
-                path.join(cwd, 'bar.js')
+                path.join(cwd, 'bar.js'),
+                path.join(cwd, 'nested', 'thing.js')
             ],
             RenamedES6ModuleFile = function () {
                 ES6ModuleFile.apply(this, _.toArray(arguments));
@@ -222,6 +223,50 @@ describe('ES6ModuleFile', function () {
                 should.exist(result);
                 should.exist(result['appkit/foo']);
                 should.exist(result['appkit/bar']);
+                should.exist(result['appkit/nested/thing']);
+
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                done(err);
+            });
+    });
+
+    it('handles windows backslashes in paths', function (done) {
+        // via https://github.com/stefanpenner/ember-app-kit/issues/525
+        var cwd = path.join(__dirname, 'fixtures', 'renamed'),
+            files = [
+                path.join(cwd, 'foo.js'),
+                path.join(cwd, 'bar.js'),
+                path.join(cwd, 'nested', 'thing.js')
+            ],
+            RenamedES6ModuleFile = function () {
+                ES6ModuleFile.apply(this, _.toArray(arguments));
+            };
+
+        RenamedES6ModuleFile.prototype = Object.create(ES6ModuleFile.prototype);
+
+        RenamedES6ModuleFile.prototype.getModuleName = function (filePath) {
+            var origName = ES6ModuleFile.prototype.getModuleName.apply(this, _.toArray(arguments));
+
+            return 'appkit/' + origName;
+        };
+
+        RenamedES6ModuleFile.prototype.getNameFromPath = function (filePath) {
+            // Change file paths to use backslashes
+            return ES6ModuleFile.prototype.getNameFromPath.call(this, filePath).replace(/\//g, '\\');
+        };
+
+        ES6ModuleFile.validateImports(files, { 
+                cwd: cwd,
+                ES6ModuleFile: RenamedES6ModuleFile
+            })
+            .then(function (result) {
+                should.exist(result);
+                should.exist(result['appkit/foo']);
+                should.exist(result['appkit/bar']);
+                should.exist(result['appkit/nested/thing']);
 
                 done();
             })

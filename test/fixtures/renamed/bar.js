@@ -1,8 +1,10 @@
 
 import foo from 'appkit/foo';
+import thing from 'appkit/nested/thing';
 
 var bar = {
-	property: true
+	property: true,
+	thing: thing
 };
 
 export { bar };
