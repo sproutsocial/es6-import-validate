@@ -22,6 +22,8 @@ describe('ES6ModuleFile', function () {
         file.analyzeFile(path.join(__dirname, 'fixtures', 'baz.js'))
             .then(function (info) {
                 should.exist(info.name);
+                should.exist(info.contents);
+                should.exist(info.syntax);
                 should.exist(info.imports);
                 should.exist(info.exports);
 
@@ -59,6 +61,8 @@ describe('ES6ModuleFile', function () {
         file.analyzeFile(path.join(__dirname, 'fixtures', 'foo.js'))
             .then(function (info) {
                 should.exist(info.name);
+                should.exist(info.contents);
+                should.exist(info.syntax);
                 should.exist(info.imports);
                 should.exist(info.exports);
 
@@ -87,6 +91,8 @@ describe('ES6ModuleFile', function () {
         file.analyzeFile(path.join(__dirname, 'fixtures', 'foo.js'))
             .then(function (info) {
                 should.exist(info.name);
+                should.exist(info.contents);
+                should.exist(info.syntax);
                 should.exist(info.imports);
                 should.exist(info.exports);
 
