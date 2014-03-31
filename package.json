@@ -1,6 +1,6 @@
 {
   "name": "es6-import-validate",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A simple ES6 Harmony Module import statement validator",
   "main": "index.js",
   "scripts": {
