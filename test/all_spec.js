@@ -281,4 +281,42 @@ describe('ES6ModuleFile', function () {
                 done(err);
             });
     });
+
+    it('handles relative paths', function (done) {
+        var cwd = path.join(__dirname, 'fixtures', 'relative'),
+            files = [
+                path.join(cwd, 'some', 'module1.js'),
+                path.join(cwd, 'other', 'module2.js'),
+                path.join(cwd, 'more', 'module3.js'),
+                path.join(cwd, 'more', 'module4.js')
+            ];
+
+        ES6ModuleFile.validateImports(files, { 
+                cwd: cwd
+            })
+            .then(function (result) {
+                should.exist(result);
+                should.exist(result['some/module1']);
+                should.exist(result['other/module2']);
+                should.exist(result['more/module3']);
+                should.exist(result['more/module4']);
+
+                result['some/module1'].imports.length.should.equal(2);
+                result['some/module1'].imports[0].from.should.equal('other/module2');
+
+                result['other/module2'].imports.length.should.equal(1);
+                result['other/module2'].imports[0].from.should.equal('more/module4');
+
+                result['more/module3'].imports.length.should.equal(1);
+                result['more/module3'].imports[0].from.should.equal('more/module4');
+
+                result['more/module4'].imports.length.should.equal(0);
+
+                done();
+            })
+            .catch(function (err) {
+                console.log(err);
+                done(err);
+            });
+    });
 });
