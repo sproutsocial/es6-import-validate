@@ -319,4 +319,22 @@ describe('ES6ModuleFile', function () {
                 done(err);
             });
     });
+
+    it('gives helpful error messages when parsing fails', function (done) {
+        var cwd = path.join(__dirname, 'fixtures', 'parsing'),
+            files = [
+                path.join(cwd, 'bad.js')
+            ];
+
+        ES6ModuleFile.analyzeFiles(files, { cwd: cwd })
+            .then(function () {
+                done(new Error('should have a parse error'));
+            })
+            .catch(function (err) {
+                should.exist(err);
+                err.message.should.containEql('problem parsing "bad"');
+
+                done();
+            });
+    });
 });
